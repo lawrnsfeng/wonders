@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <!-- `viewport-fit=cover` is what makes `env(safe-area-inset-*)` below
+         resolve to anything at all; without it every inset is 0 and the
+         canvas sizing further down is a no-op. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1c1c1c">
+    <!-- Installed to a home screen the app runs without browser chrome,
+         which is worth ~110pt of an 852pt phone viewport (~13%) — the
+         cheapest vertical space this UI can buy. -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Wonderful">
+    <title>It's a Wonderful World</title>
+
+    
+<script type="module">
+import init, * as bindings from '/wonders/app-1f0d435b37eac474.js';
+const wasm = await init({ module_or_path: '/wonders/app-1f0d435b37eac474_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+    <!--
+      DEPLOY BUILD. Generated from index.html; keep the two in step.
+
+      Two deliberate differences, both required:
+
+      1. No `copy-dir` directives. Their source is `assets/`, which is
+         gitignored — being retail art this repo does not distribute — so it is
+         absent in CI, and each directive fails the build outright when its
+         source directory is missing. The deployed build renders generated card
+         faces; a player restores their own art at runtime through Settings.
+
+      2. `data-wasm-opt="z"` rather than "0". The dev build disables wasm-opt
+         unconditionally for build speed, which leaves a 34MB module — fine
+         over localhost, not fine over the network.
+
+      `<base data-trunk-public-url />` is inherited unchanged and is what makes
+      the sub-path deploy work: `document.baseURI` reads it, and the art
+      resolver builds every URL from that rather than from `location.origin`,
+      which would drop the `/wonders/` segment.
+    -->
+    <!--
+      This build ships no art, so tell the app rather than letting it discover
+      it 304 times. Without this the resolver points at the Pages base, every
+      card and icon 404s to a full HTML error page, and the result is the
+      generated face it would have drawn anyway — just after a few hundred
+      wasted round trips on someone's phone.
+    -->
+    <meta name="wonderful-art" content="disabled" />
+    <!--
+      The OPFS worker. A second wasm binary: `createSyncAccessHandle` exists
+      only inside a dedicated worker, so the database cannot live on the main
+      thread where eframe renders.
+    -->
+    
+    <base href="/wonders/" />
+
+    <!-- **After `<base>`, and that is load-bearing.** `<base>` only affects
+         elements that follow it, and this build serves from `/wonders/` — a
+         relative href written above the tag would resolve against the domain
+         root and 404 silently.
+
+         `copy-file`, not `copy-dir`: these two live in the repo beside this
+         file rather than in the gitignored `assets/`, which is why this build
+         can carry them when it carries no other asset directive. The SVG is
+         Two SVGs, because the tab icon follows the game: a globe for
+         It's a Wonderful World and a castle for the Kingdom, the same
+         pair the in-app switcher button shows. `#favicon` is retargeted
+         from Rust; the href stays relative so `<base>` keeps resolving
+         it under the deploy build's sub-path. iOS will not take an SVG
+         for a home-screen icon, which the PWA metas above invite, so the
+         PNG is there for that. -->
+    
+    
+    
+    <link id="favicon" rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+
+
+    <!-- Local dev only: copies the gitignored assets/{cards,icons}/ into
+         dist/{cards,icons} so the browser build can fetch retail art
+         same-origin over HTTP (browsers have no file:// access). A deployed
+         build without a local assets/ checkout needs this swapped for a
+         real Remote CDN base_url (plan "Art sourcing") -- each directive
+         will fail the build if its source dir is missing, which is the
+         CI/Pages gap already flagged in docs/clarifications.md and the
+         plan (now doubled, one failure point per directive). -->
+    <!-- IAWK's whole asset tree lands under dist/iawk/, one level down from
+         IaWW's — both games name their sections `cards`/`icons`, so sharing
+         the root would have IAWK's scans requested from IaWW's directories.
+         `local_iawk_art_source` builds `{origin}/iawk` to match. -->
+
+    <style>
+        html { touch-action: manipulation; }
+        body { background: #1c1c1c; }
+        html, body {
+            overflow: hidden; margin: 0 !important; padding: 0 !important; height: 100%; width: 100%;
+            /* Kills pull-to-refresh, which otherwise fires whenever a
+               vertical swipe over a card grid starts near the top and
+               reloads the game mid-turn. */
+            overscroll-behavior: none;
+        }
+        /* Inset out of the notch and the home indicator. This needs no Rust:
+           eframe sizes its viewport from the canvas's own bounding rect
+           (`eframe/src/web/mod.rs`), so shrinking the canvas box here is the
+           entire fix — eframe 0.36 has no safe-area support of its own.
+
+           `touch-action: none` on the canvas specifically, while `html`
+           keeps `manipulation`: the latter alone still lets some browsers
+           claim vertical pans that egui's own ScrollArea should handle. */
+        canvas {
+            margin: 0 auto; display: block; position: absolute;
+            top: env(safe-area-inset-top);
+            left: env(safe-area-inset-left);
+            width: calc(100% - env(safe-area-inset-left) - env(safe-area-inset-right));
+            height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+            touch-action: none;
+        }
+        .centered {
+            margin: 0 auto; display: block; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); color: #f0f0f0; font-size: 20px;
+            font-family: Helvetica, sans-serif; text-align: center;
+        }
+    </style>
+<link rel="modulepreload" href="/wonders/app-1f0d435b37eac474.js" crossorigin="anonymous" integrity="sha384-SNIpgEMgNThTM9+W9Ey+hY9/571mcc3YjnkQFJ9sV8CLnBdjVYl2vBn9MYewOeCj"><link rel="preload" href="/wonders/app-1f0d435b37eac474_bg.wasm" crossorigin="anonymous" integrity="sha384-vxCJO1eTS0ww2SUIM+CW1biQSRg4NrmajbKMDhTSRbh8w4nDoSKx4wJ7JC9LkFkw" as="fetch" type="application/wasm"></head>
+<body>
+    <canvas id="wonderful_canvas"></canvas>
+    <div class="centered" id="loading_text">
+        <noscript>You need JavaScript to use this app.</noscript>
+        <p>Loading…</p>
+    </div>
+</body>
+</html>

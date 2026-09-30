@@ -1,0 +1,1 @@
+importScripts("./store-worker.js");wasm_bindgen("./store-worker_bg.wasm");

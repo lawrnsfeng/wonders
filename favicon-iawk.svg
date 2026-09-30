@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Castle">
+  <!-- It's a Wonderful Kingdom, matching the castle on its own switcher
+       button — and deliberately the *same shape the app draws*: this is the
+       U+1F3F0 🏰 glyph lifted straight out of NotoEmoji-Regular, which is the font
+       egui resolves that emoji to, so the browser tab and the in-app switcher
+       button cannot drift apart. Drawing one by hand is what made the first
+       attempt wrong.
+
+       Regenerate with fontTools if the bundled font ever changes:
+         glyph U+1F3F0 of epaint_default_fonts' NotoEmoji-Regular.ttf,
+         outline via
+         SVGPathPen, flipped (font Y is up, SVG Y is down) and centred in this
+         64-unit box with a 3-unit margin.
+
+       NotoEmoji is SIL Open Font License 1.1; the OFL does not restrict
+       artwork produced from a font, and the provenance is recorded here
+       rather than left to be rediscovered.
+
+       Transparent ground on purpose: a favicon sits on whatever chrome the
+       browser has, and a painted tile behind it reads as a box. One flat
+       colour, because the glyph is monochrome and a tab is read at 16px. -->
+  <g transform="translate(-0.112 52.231) scale(0.02470 -0.02470)">
+    <path fill="#e0b000" d="M2293 -355H1434V-100Q1434 -82 1421.0 -69.0Q1408 -56 1389 -56H1210Q1191 -56 1178.5 -69.0Q1166 -82 1166 -100V-355H307L407 239V329H474V631Q462 631 457 641L436 697Q434 697 434 703Q434 705 435 707L620 1059V1382Q620 1390 626.0 1396.5Q632 1403 640 1403Q648 1403 655 1396L862 1312Q873 1306 873 1296Q873 1285 862 1278L660 1197V1059L842 711Q844 708 844 703Q844 698 842 697L822 641Q817 631 805 631V272H863V329H957V272H1026V407L897 533V826H992V761H1071V826H1134V1220H1126Q1121 1220 1117.0 1223.5Q1113 1227 1111 1231L1089 1288L1088 1293Q1088 1296 1090 1300L1273 1648V1973Q1273 1981 1279.0 1987.0Q1285 1993 1293 1993Q1302 1993 1307 1986L1515 1903Q1527 1898 1527 1885Q1527 1873 1515 1868L1312 1786V1648L1498 1297Q1498 1295 1499 1293Q1497 1289 1497 1288L1475 1231Q1473 1227 1469.0 1223.5Q1465 1220 1459 1220H1451V826H1511V761H1589V826H1684V533L1555 407V272H1636V329H1730V272H1781V631Q1769 631 1764 641L1743 697Q1741 697 1741 703Q1741 705 1742 707L1926 1056V1382Q1926 1390 1932.5 1396.5Q1939 1403 1947 1403Q1953 1403 1960 1396L2169 1312Q2180 1306 2180 1296Q2180 1285 2169 1278L1966 1197V1056L2149 711Q2151 708 2151 704Q2151 700 2149 697L2127 641Q2125 631 2111 631V329H2193V239ZM1332 1048V1151H1253V1048ZM678 457V561H601V457ZM1908 561V457H1985V561Z"/>
+  </g>
+</svg>
